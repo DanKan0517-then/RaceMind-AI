@@ -1,3 +1,14 @@
+---
+title: RaceMind AI
+emoji: 🏎️
+colorFrom: red
+colorTo: gray
+sdk: docker
+app_port: 7860
+pinned: false
+short_description: RAG assistant for the FIA F1 Technical Regulations
+---
+
 # RaceMind-AI
 AI-powered Formula 1 technical assistant using Retrieval-Augmented Generation (RAG), LangChain, vector search, and LLMs.
 
@@ -55,6 +66,25 @@ The model then generates an answer using the retrieved context.
 
 #OUTPUT
 <img width="1034" height="743" alt="image" src="https://github.com/user-attachments/assets/8d95996b-8a5e-4a0b-8c18-272e4c6b4532" />
+
+## Run locally
+
+```bash
+pip install -r requirements.txt
+cp .env.example .env        # add your GROQ_API_KEY
+python ingest.py            # builds data/chroma from the PDF (one time)
+python main.py              # web app at http://localhost:7860
+python rag_pipeline.py      # or ask from the terminal
+```
+
+API: `POST /api/ask` with `{"question": "..."}` returns the answer plus page-level sources. `GET /health` reports whether the index and API key are present.
+
+## Deployment
+
+Deployed as a Docker Space on Hugging Face. The Docker build installs CPU-only PyTorch, downloads the embedding model and builds the Chroma index into the image, so the container starts ready to answer.
+
+- `GROQ_API_KEY` is set as a Space secret.
+- `.github/workflows/deploy-hf-space.yml` mirrors every push to `main` to the Space, which rebuilds automatically. It needs an `HF_TOKEN` repo secret and an `HF_SPACE` repo variable (`<hf-username>/racemind-ai`).
 
 
 Dhanushkanth Balasubramanian
