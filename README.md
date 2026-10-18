@@ -77,4 +77,5 @@ Runs on Render's free tier as a Docker web service (config in `render.yaml`).
 - The Docker build downloads the model and builds the Chroma index from the PDF into the image, so the service starts ready to answer.
 - `GROQ_API_KEY` is set as an environment variable in the Render dashboard.
 - Every push to `main` redeploys automatically.
-- The free tier sleeps after about 15 minutes idle, so the first request after that takes around 30–60 seconds.
+- The free tier sleeps after about 15 minutes idle, so the first request after that takes around 30–60 seconds.<img width="1498" height="822" alt="image" src="https://github.com/user-attachments/assets/a3efbd37-6c6c-4f63-bb34-dd6c04d3db1f" />
+
