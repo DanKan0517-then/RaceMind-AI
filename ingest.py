@@ -9,8 +9,9 @@ from pathlib import Path
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+from rag import get_embeddings
 
 # -----------------------------
 # 1. Configuration
@@ -22,7 +23,6 @@ CANDIDATE_PDFS = [
     "technical_regulations.pdf",
 ]
 CHROMA_PATH = os.getenv("CHROMA_PATH", "data/chroma")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 
 PDF_PATH = next((p for p in CANDIDATE_PDFS if p and Path(p).exists()), None)
 if PDF_PATH is None:
@@ -50,7 +50,7 @@ print(f"Created {len(chunks)} chunks")
 # -----------------------------
 
 print("Loading embedding model...")
-embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+embeddings = get_embeddings()
 
 # -----------------------------
 # 5. Store in Chroma (fresh, so re-running doesn't duplicate chunks)

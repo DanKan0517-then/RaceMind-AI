@@ -1,14 +1,3 @@
----
-title: RaceMind AI
-emoji: 🏎️
-colorFrom: red
-colorTo: gray
-sdk: docker
-app_port: 7860
-pinned: false
-short_description: RAG assistant for the FIA F1 Technical Regulations
----
-
 # RaceMind-AI
 AI-powered Formula 1 technical assistant using Retrieval-Augmented Generation (RAG), LangChain, vector search, and LLMs.
 
@@ -81,11 +70,10 @@ API: `POST /api/ask` with `{"question": "..."}` returns the answer plus page-lev
 
 ## Deployment
 
-Deployed as a Docker Space on Hugging Face. The Docker build installs CPU-only PyTorch, downloads the embedding model and builds the Chroma index into the image, so the container starts ready to answer.
+Runs on Render's free tier as a Docker web service (config in `render.yaml`).
 
-- `GROQ_API_KEY` is set as a Space secret.
-- `.github/workflows/deploy-hf-space.yml` mirrors every push to `main` to the Space, which rebuilds automatically. It needs an `HF_TOKEN` repo secret and an `HF_SPACE` repo variable (`<hf-username>/racemind-ai`).
-
-
-Dhanushkanth Balasubramanian
-
+- Embeddings use the ONNX build of `all-MiniLM-L6-v2` that ships with ChromaDB. It's the same model, so the vectors are the same, but there's no torch dependency, which keeps the app inside Render's 512MB memory limit.
+- The Docker build downloads the model and builds the Chroma index from the PDF into the image, so the service starts ready to answer.
+- `GROQ_API_KEY` is set as an environment variable in the Render dashboard.
+- Every push to `main` redeploys automatically.
+- The free tier sleeps after about 15 minutes idle, so the first request after that takes around 30–60 seconds.

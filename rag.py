@@ -3,15 +3,15 @@
 import os
 from functools import lru_cache
 
+from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 from dotenv import load_dotenv
 from langchain_community.vectorstores import Chroma
+from langchain_core.embeddings import Embeddings
 from langchain_groq import ChatGroq
-from langchain_huggingface import HuggingFaceEmbeddings
 
 load_dotenv()
 
 CHROMA_PATH = os.getenv("CHROMA_PATH", "data/chroma")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 TOP_K = int(os.getenv("TOP_K", "4"))
 
@@ -34,9 +34,26 @@ FIA CONTEXT:
 """
 
 
+class MiniLMOnnxEmbeddings(Embeddings):
+    """all-MiniLM-L6-v2 (384-dim) run through ONNX Runtime via ChromaDB.
+
+    Same model as sentence-transformers/all-MiniLM-L6-v2, but without torch,
+    so the whole app fits in a 512MB container.
+    """
+
+    def __init__(self):
+        self._fn = DefaultEmbeddingFunction()
+
+    def embed_documents(self, texts):
+        return [list(map(float, v)) for v in self._fn(list(texts))]
+
+    def embed_query(self, text):
+        return self.embed_documents([text])[0]
+
+
 @lru_cache(maxsize=1)
 def get_embeddings():
-    return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+    return MiniLMOnnxEmbeddings()
 
 
 @lru_cache(maxsize=1)

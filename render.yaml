@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: racemind-ai
+    runtime: docker
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false

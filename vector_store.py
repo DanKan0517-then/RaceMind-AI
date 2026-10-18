@@ -1,11 +1,9 @@
 from langchain_community.vectorstores import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
+from rag import get_embeddings
 
 
 # Embedding model
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-)
+embeddings = get_embeddings()
 
 
 # Test documents
